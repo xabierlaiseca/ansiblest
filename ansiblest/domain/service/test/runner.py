@@ -1,4 +1,4 @@
-from .ansible import run_ansible_playbook
+from ..ansible import run_ansible_playbook
 
 from ansiblest.domain.model.events import TestFinishedEvent, TestStartedEvent, TestLifeCycleEvent, TestLifeCycleStage
 from ansiblest.domain.model.test import TestResult, TestResultStatus

@@ -5,7 +5,7 @@ from unittest import TestCase
 from ansiblest.domain.model.events import TestFinishedEvent, TestStartedEvent, TestLifeCycleEvent, TestLifeCycleStage
 from ansiblest.domain.model.test import Test, TestResult, TestResultStatus
 
-from ansiblest.domain.service.test_runner import run_tests, run_single_test
+from ansiblest.domain.service.test.runner import run_tests, run_single_test
 
 
 class TestRunTestsFunction(TestCase):
@@ -21,7 +21,7 @@ class TestRunTestsFunction(TestCase):
     TEST_PLAYBOOK_2 = "test2.yaml"
     TEARDOWN_PLAYBOOK_2 = "teardown2.yaml"
 
-    @patch("ansiblest.domain.service.test_runner.Pool")
+    @patch("ansiblest.domain.service.test.runner.Pool")
     def test__successful(self, pool_class_mock):
         tests = [
             Test(self.INVENTORY_1, self.SETUP_PLAYBOOK_1, self.TEST_PLAYBOOK_1, self.TEARDOWN_PLAYBOOK_1),
@@ -44,7 +44,7 @@ class TestRunTestsFunction(TestCase):
         self.assertEqual(expected, returned)
 
         pool_class_mock.assert_called_once_with(processes=self.MAX_RUNNING_TESTS)
-        
+
         self.assertEqual(2, pool_instance_mock.apply_async.call_count)
         pool_instance_mock.apply_async.assert_has_calls([
             call(func=run_single_test, args=[tests[0], results_queue]),
@@ -66,8 +66,8 @@ class TestRunSigleTestFunction(TestCase):
     TEST_PLAYBOOK = "test.yaml"
     TEARDOWN_PLAYBOOK = "teardown.yaml"
 
-    @patch("ansiblest.domain.service.test_runner.run_ansible_playbook")
-    @patch("ansiblest.domain.service.test_runner.NamedTemporaryFile")
+    @patch("ansiblest.domain.service.test.runner.run_ansible_playbook")
+    @patch("ansiblest.domain.service.test.runner.NamedTemporaryFile")
     def test__setup_stage_error(self, ntf_class_mock, rap_mock):
         ntf_instance_mock = ntf_class_mock.return_value
         ntf_instance_mock.name = self.OUTPUT_FILE
@@ -88,8 +88,8 @@ class TestRunSigleTestFunction(TestCase):
 
         rap_mock.assert_called_once_with(self.INVENTORY, self.SETUP_PLAYBOOK, self.OUTPUT_FILE)
 
-    @patch("ansiblest.domain.service.test_runner.run_ansible_playbook")
-    @patch("ansiblest.domain.service.test_runner.NamedTemporaryFile")
+    @patch("ansiblest.domain.service.test.runner.run_ansible_playbook")
+    @patch("ansiblest.domain.service.test.runner.NamedTemporaryFile")
     def test__test_stage_failed(self, ntf_class_mock, rap_mock):
         ntf_instance_mock = ntf_class_mock.return_value
         ntf_instance_mock.name = self.OUTPUT_FILE
@@ -115,8 +115,8 @@ class TestRunSigleTestFunction(TestCase):
             call(self.INVENTORY, self.TEST_PLAYBOOK, self.OUTPUT_FILE)
         ])
 
-    @patch("ansiblest.domain.service.test_runner.run_ansible_playbook")
-    @patch("ansiblest.domain.service.test_runner.NamedTemporaryFile")
+    @patch("ansiblest.domain.service.test.runner.run_ansible_playbook")
+    @patch("ansiblest.domain.service.test.runner.NamedTemporaryFile")
     def test__teardown_stage_error(self, ntf_class_mock, rap_mock):
         ntf_instance_mock = ntf_class_mock.return_value
         ntf_instance_mock.name = self.OUTPUT_FILE
@@ -144,8 +144,8 @@ class TestRunSigleTestFunction(TestCase):
             call(self.INVENTORY, self.TEARDOWN_PLAYBOOK, self.OUTPUT_FILE)
         ])
 
-    @patch("ansiblest.domain.service.test_runner.run_ansible_playbook")
-    @patch("ansiblest.domain.service.test_runner.NamedTemporaryFile")
+    @patch("ansiblest.domain.service.test.runner.run_ansible_playbook")
+    @patch("ansiblest.domain.service.test.runner.NamedTemporaryFile")
     def test__successful(self, ntf_class_mock, rap_mock):
         ntf_instance_mock = ntf_class_mock.return_value
         ntf_instance_mock.name = self.OUTPUT_FILE
