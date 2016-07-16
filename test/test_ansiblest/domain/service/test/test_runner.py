@@ -24,8 +24,8 @@ class TestRunTestsFunction(TestCase):
     @patch("ansiblest.domain.service.test.runner.Pool")
     def test__successful(self, pool_class_mock):
         tests = [
-            Test(self.INVENTORY_1, self.SETUP_PLAYBOOK_1, self.TEST_PLAYBOOK_1, self.TEARDOWN_PLAYBOOK_1),
-            Test(self.INVENTORY_2, self.SETUP_PLAYBOOK_2, self.TEST_PLAYBOOK_2, self.TEARDOWN_PLAYBOOK_2)
+            Test(self.TEST_PLAYBOOK_1, self.INVENTORY_1, self.SETUP_PLAYBOOK_1, self.TEARDOWN_PLAYBOOK_1),
+            Test(self.TEST_PLAYBOOK_2, self.INVENTORY_2, self.SETUP_PLAYBOOK_2, self.TEARDOWN_PLAYBOOK_2)
         ]
         results_queue = Queue()
 
@@ -73,7 +73,7 @@ class TestRunSigleTestFunction(TestCase):
         ntf_instance_mock.name = self.OUTPUT_FILE
         rap_mock.return_value = 1
 
-        test = Test(self.INVENTORY, self.SETUP_PLAYBOOK, self.TEST_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
+        test = Test(self.TEST_PLAYBOOK, self.INVENTORY, self.SETUP_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
         results_queue = Queue()
         expected_result_status = TestResultStatus.error
         expected = TestResult(test, expected_result_status)
@@ -95,7 +95,7 @@ class TestRunSigleTestFunction(TestCase):
         ntf_instance_mock.name = self.OUTPUT_FILE
         rap_mock.side_effect = [0, 1]
 
-        test = Test(self.INVENTORY, self.SETUP_PLAYBOOK, self.TEST_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
+        test = Test(self.TEST_PLAYBOOK, self.INVENTORY, self.SETUP_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
         results_queue = Queue()
         expected_result_status = TestResultStatus.failed
         expected = TestResult(test, expected_result_status)
@@ -122,7 +122,7 @@ class TestRunSigleTestFunction(TestCase):
         ntf_instance_mock.name = self.OUTPUT_FILE
         rap_mock.side_effect = [0, 0, 1]
 
-        test = Test(self.INVENTORY, self.SETUP_PLAYBOOK, self.TEST_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
+        test = Test(self.TEST_PLAYBOOK, self.INVENTORY, self.SETUP_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
         results_queue = Queue()
         expected_result_status = TestResultStatus.error
         expected = TestResult(test, expected_result_status)
@@ -151,7 +151,7 @@ class TestRunSigleTestFunction(TestCase):
         ntf_instance_mock.name = self.OUTPUT_FILE
         rap_mock.return_value = 0
 
-        test = Test(self.INVENTORY, self.SETUP_PLAYBOOK, self.TEST_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
+        test = Test(self.TEST_PLAYBOOK, self.INVENTORY, self.SETUP_PLAYBOOK, self.TEARDOWN_PLAYBOOK)
         results_queue = Queue()
         expected_result_status = TestResultStatus.successful
         expected = TestResult(test, expected_result_status)
