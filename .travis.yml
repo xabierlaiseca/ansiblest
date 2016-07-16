@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+install:
+  - travis_retry pip install -r requirements/dev.txt
+  - travis_retry pip install coveralls
+script:
+  - coverage run --source=ansiblest -m nose2.__main__ -v
+after_success:
+  - coveralls
