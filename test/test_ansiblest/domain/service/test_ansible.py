@@ -13,7 +13,7 @@ class TestRunAnsiblePlaybookFunction(TestCase):
 
 
     @patch("ansiblest.domain.service.ansible.call")
-    @patch("ansiblest.domain.service.ansible.open")
+    @patch("builtins.open")
     def test__run_ansible_playbook__without_inventory(self, open_mock, call_mock):
         open_mock.return_value.__enter__.return_value = output_file_mock = Mock()
         call_mock.return_value = FakeCallReturnValue(self.RETURN_CODE)
@@ -29,7 +29,7 @@ class TestRunAnsiblePlaybookFunction(TestCase):
 
 
     @patch("ansiblest.domain.service.ansible.call")
-    @patch("ansiblest.domain.service.ansible.open")
+    @patch("builtins.open")
     def test__run_ansible_playbook__with_inventory(self, open_mock, call_mock):
         open_mock.return_value.__enter__.return_value = output_file_mock = Mock()
         call_mock.return_value = FakeCallReturnValue(self.RETURN_CODE)
