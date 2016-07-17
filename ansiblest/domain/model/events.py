@@ -5,28 +5,40 @@ class EventTypes(object):
     TEST_LIFE_CYCLE = "event.test.lifecycle"
     TEST_FINISHED = "event.test.finished"
 
+    TEST_SUITE_FINISHED = "event.suite.finished"
 
 class _BaseEvent(object):
-    def __init__(self, name, test_name):
+    def __init__(self, name):
         self.__name = name
-        self.__test_name = test_name
 
     @property
     def name(self):
         return self.__name
+
+
+    def __eq__(self, other):
+        if isinstance(other, _BaseEvent):
+            return super().__eq__(other) and \
+                   self.name == other.name
+
+class _BaseTestEvent(_BaseEvent):
+    def __init__(self, name, test_name):
+        super().__init__(name)
+        self.__test_name = test_name
 
     @property
     def test_name(self):
         return self.__test_name
 
     def __eq__(self, other):
-        if isinstance(other, _BaseEvent):
-            return self.name == other.name and self.test_name == self.test_name
+        if isinstance(other, _BaseTestEvent):
+            return super().__eq__(other) and \
+                   self.test_name == self.test_name
         else:
             return False
 
 
-class TestStartedEvent(_BaseEvent):
+class TestStartedEvent(_BaseTestEvent):
     def __init__(self, test_name, output_file):
         super().__init__(EventTypes.TEST_STARTED, test_name)
 
@@ -38,13 +50,14 @@ class TestStartedEvent(_BaseEvent):
 
     def __eq__(self, other):
         if self.__class__ == other.__class__:
-            super().__eq__(other)
-            return self.output_file == other.output_file
+
+            return super().__eq__(other) and \
+                   self.output_file == other.output_file
         else:
             return False
 
 
-class TestLifeCycleEvent(_BaseEvent):
+class TestLifeCycleEvent(_BaseTestEvent):
     def __init__(self, test_name, stage):
         assert isinstance(stage, TestLifeCycleStage)
 
@@ -58,8 +71,8 @@ class TestLifeCycleEvent(_BaseEvent):
 
     def __eq__(self, other):
         if self.__class__ == other.__class__:
-            super().__eq__(other)
-            return self.stage == other.stage
+            return super().__eq__(other) and \
+                   self.stage == other.stage
         else:
             return False
 
@@ -70,7 +83,7 @@ class TestLifeCycleStage(Enum):
     teardown = 3
 
 
-class TestFinishedEvent(_BaseEvent):
+class TestFinishedEvent(_BaseTestEvent):
     def __init__(self, test_name, test_result_status):
         super().__init__(EventTypes.TEST_STARTED, test_name)
 
@@ -82,7 +95,18 @@ class TestFinishedEvent(_BaseEvent):
 
     def __eq__(self, other):
         if self.__class__ == other.__class__:
-            super().__eq__(other)
-            return self.test_result_status == other.test_result_status
+            return super().__eq__(other) and \
+                   self.test_result_status == other.test_result_status
+        else:
+            return False
+
+class TestSuiteFinishedEvent(_BaseEvent):
+    def __init__(self):
+        super().__init__(EventTypes.TEST_SUITE_FINISHED)
+
+
+    def __eq__(self, other):
+        if self.__class__ == other.__class__:
+            return super().__eq__(other)
         else:
             return False
